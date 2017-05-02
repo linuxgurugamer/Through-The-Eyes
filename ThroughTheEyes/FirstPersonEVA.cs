@@ -64,6 +64,11 @@ namespace FirstPerson
 		private void onSceneLoadRequested(GameScenes scene) {
 			//This is needed to avoid fighting stock camera during "Revert to launch" as that causes NullRefences in Unity breaking the revert process
 			stopTouchingCamera = true;
+			if (fpCameraManager != null && fpCameraManager.isFirstPerson)
+			{
+				KSPLog.print ("TTE: Resetting because of scene change.");
+				fpCameraManager.resetCamera (fpCameraManager.currentfpeva.vessel);
+			}
 
 			KeyDisabler.instance.restoreAllKeys (KeyDisabler.eDisableLockSource.FirstPersonEVA);
 		}
