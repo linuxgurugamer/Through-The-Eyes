@@ -9,6 +9,9 @@ namespace FirstPerson
 {
 	public class FPStateWalkRun
 	{
+		const float RUN_TURN_RATE = 0.7f;
+		const float STAND_TURN_RATE = 0.1f;	
+
 		FirstPersonEVA imgr;
 		Vector3 walk_start_fwd;
 		//Vector3 target_fwd;
@@ -394,9 +397,9 @@ namespace FirstPerson
 			{
 				//Note that the direction of this is used to tilt the kerbal into the turn.
 				if (GameSettings.EVA_left.GetKey ())
-					ReflectedMembers.eva_deltaHdg.SetValue (eva, -61f);
+					ReflectedMembers.eva_deltaHdg.SetValue (eva, -61f * STAND_TURN_RATE);
 				else
-					ReflectedMembers.eva_deltaHdg.SetValue (eva, 61f);
+					ReflectedMembers.eva_deltaHdg.SetValue (eva, 61f * STAND_TURN_RATE);
 			}
 			//Likewise if we are turning only and forward/back is pressed, go back to walk state.
 			else if (
@@ -441,14 +444,14 @@ namespace FirstPerson
 			if (!imgr.fpCameraManager.isFirstPerson)
 				return;
 
-			//Note that turnrate is in radians/sec, thus * 57.29578f (180/pi)
+			//Note that turnrate is in radians/sec, thus * Mathf.Rad2Deg (=57.29578f (180/pi))
 			if (GameSettings.EVA_left.GetKey (false)) {
-				current_turn -= (imgr.fpCameraManager.currentfpeva.turnRate * 0.99f) * Time.fixedDeltaTime * 57.29578f;
+				current_turn -= (imgr.fpCameraManager.currentfpeva.turnRate * 0.99f * RUN_TURN_RATE) * Time.fixedDeltaTime * Mathf.Rad2Deg;
 				if (current_turn < 0f)
 					current_turn += 360f;
 			}
 			else if (GameSettings.EVA_right.GetKey (false)) {
-				current_turn += (imgr.fpCameraManager.currentfpeva.turnRate * 0.99f) * Time.fixedDeltaTime * 57.29578f;
+				current_turn += (imgr.fpCameraManager.currentfpeva.turnRate * 0.99f * RUN_TURN_RATE) * Time.fixedDeltaTime * Mathf.Rad2Deg;
 				if (current_turn >= 360f)
 					current_turn -= 360f;
 			}
