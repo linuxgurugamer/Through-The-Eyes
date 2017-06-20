@@ -82,7 +82,7 @@ namespace FirstPerson
 			lastHookedVessel = null;
 
 			forceEVA = ConfigUtil.ForceEVA();
-			toggleFirstPersonKey = ConfigUtil.ToggleFirstPersonKey(GameSettings.CAMERA_MODE.primary);
+			toggleFirstPersonKey = ConfigUtil.ToggleFirstPersonKey(KeyDisabler.instance.GetSavedKeyCodes(KeyDisabler.eKeyCommand.CAMERA_MODE)[0]);
 
 			stopTouchingCamera = false;
 			
@@ -94,8 +94,8 @@ namespace FirstPerson
 			//We unbind the main one, so this allows us to still read the key state.
 			resetivacamerabinding = new KeyBinding ();
 			KeyCode[] resetcameracodes = KeyDisabler.instance.GetSavedKeyCodes (KeyDisabler.eKeyCommand.CAMERA_NEXT);
-			resetivacamerabinding.primary = resetcameracodes [0];
-			resetivacamerabinding.secondary = resetcameracodes [1];
+			resetivacamerabinding.primary = new KeyCodeExtended(resetcameracodes [0]);
+			resetivacamerabinding.secondary = new KeyCodeExtended(resetcameracodes [1]);
 
 			GameEvents.onVesselDestroy.Add(onVesselDestroy);
 			/*GameEvents.onCrewKilled.Add((v) => {

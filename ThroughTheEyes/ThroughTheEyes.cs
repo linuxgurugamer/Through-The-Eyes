@@ -10,7 +10,7 @@ namespace FirstPerson
 
         bool disableMapView, forceIVA;
         KeyCode reviewDataKey, recoverKey;
-		static KeyCode EVAKey = ConfigUtil.EVAKey(GameSettings.CAMERA_MODE.primary);
+		static KeyCode EVAKey = ConfigUtil.EVAKey(GameSettings.CAMERA_MODE.primary.code);
         CameraManager.CameraMode flight = CameraManager.CameraMode.Flight;
         CameraManager.CameraMode IVA = CameraManager.CameraMode.IVA;
         CameraManager.CameraMode map = CameraManager.CameraMode.Map;
@@ -114,6 +114,14 @@ namespace FirstPerson
 			}
 		}
 
+		void onGameSceneLoadRequested(GameScenes scene)
+		{
+			if (keyDisabler != null)
+			{
+				keyDisabler.restoreAllKeys();
+			}
+		}
+
         void Start()
         {
 
@@ -127,6 +135,7 @@ namespace FirstPerson
 			GameEvents.onVesselChange.Add(onVesselChange);
 			GameEvents.OnCameraChange.Add(OnCameraChange);
 			GameEvents.OnIVACameraKerbalChange.Add(OnIVACameraKerbalChange);
+			GameEvents.onGameSceneLoadRequested.Add(onGameSceneLoadRequested);
 
 			reviewDataKey = ConfigUtil.checkKeys();
 			forceIVA = ConfigUtil.ForceIVA();
