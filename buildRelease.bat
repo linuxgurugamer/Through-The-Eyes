@@ -3,17 +3,16 @@
 
 rem Set variables here
 
-set H=R:\KSP_1.3.0_dev
+
 set GAMEDIR=ThroughTheEyes
 set LICENSE=LICENSE
-set README=ReadMe.md
+set README=README.md
 
 set RELEASEDIR=d:\Users\jbb\release
 set ZIP="c:\Program Files\7-zip\7z.exe"
 
 rem Copy files to GameData locations
 
-copy /y TemplateDoc.txt GameData\%GAMEDIR%
 copy /Y "%1%2" "GameData\%GAMEDIR%\Plugins"
 copy /Y %GAMEDIR%.version GameData\%GAMEDIR%
 copy /Y ..\MiniAVC.dll GameData\%GAMEDIR%
