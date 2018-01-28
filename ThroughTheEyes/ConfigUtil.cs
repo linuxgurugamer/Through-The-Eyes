@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -8,44 +9,52 @@ namespace FirstPerson
 
     public static class ConfigUtil
     {
-
-        static string configPath = "GameData/ThroughTheEyes/PluginData/options.cfg";
+        static string configDir = "GameData/ThroughTheEyes/PluginData";
+        static string configPath = configDir + "/options.cfg";
         static ConfigNode cfg;
 
+        private static void SaveConfigFile()
+        {
+            if (!Directory.Exists(configDir))
+                Directory.CreateDirectory(configDir);
+            cfg.Save(configPath);
+        }
 
         private static void checkConfig()
         {
+            if (!Directory.Exists(configDir))
+                Directory.CreateDirectory(configDir);
 			cfg = ConfigNode.Load(configPath);
             if (cfg == null)
             {
                 cfg = new ConfigNode();
-				cfg.Save(configPath);
+                SaveConfigFile();
                 Debug.Log("No config found. Writing one.");
             }
             
             if (!cfg.HasValue("toggleFirstPersonKey"))
             {
                 cfg.AddValue("toggleFirstPersonKey", "default");
-				cfg.Save(configPath);
+                SaveConfigFile();
                 Debug.Log("No toggleFirstPersonKey value found. Reverting to camera mode key");
             }
 
             if (!cfg.HasValue("EVAKey"))
             {
                 cfg.AddValue("EVAKey", "default");
-				cfg.Save(configPath);
+                SaveConfigFile();
                 Debug.Log("No EVAKey value found. Reverting to camera mode key");
             }
 			if (!cfg.HasValue("recoverKey"))
 			{
 				cfg.AddValue("recoverKey", "R");
-				cfg.Save(configPath);
-				Debug.Log("No recoverKey value found. Making one");
+                SaveConfigFile();
+                Debug.Log("No recoverKey value found. Making one");
 			}
             if (!cfg.HasValue("reviewDataKey"))
             {
                 cfg.AddValue("reviewDataKey", "Backslash");
-				cfg.Save(configPath);
+                SaveConfigFile();
                 Debug.Log("No reviewDataKey value found. Adding one");
             }
         }
@@ -63,8 +72,9 @@ namespace FirstPerson
 			catch
 			{
 				cfg.SetValue("recoverKey", "R");
-				cfg.Save(configPath);
-				Debug.Log("Make sure to use the list of keys to set the key! Reverting to R");
+                SaveConfigFile();
+
+                Debug.Log("Make sure to use the list of keys to set the key! Reverting to R");
 				return KeyCode.R;
 
 			}
@@ -89,7 +99,8 @@ namespace FirstPerson
                 catch
                 {
                     cfg.SetValue("EVAKey", "default");
-					cfg.Save(configPath);
+                    SaveConfigFile();
+
                     Debug.Log("Set the key from the list of keys or use the string 'default'! Reverting to camera mode key");
                     return key;
 
@@ -116,7 +127,8 @@ namespace FirstPerson
                 catch
                 {
                     cfg.SetValue("toggleFirstPersonKey", "default");
-					cfg.Save(configPath);
+                    SaveConfigFile();
+
                     Debug.Log("Set the key from the list of keys or use the string 'default'! Reverting to camera mode key");
                     return key;
 
@@ -163,7 +175,8 @@ namespace FirstPerson
             catch
             {
                 cfg.SetValue("reviewDataKey", "Backslash");
-				cfg.Save(configPath);
+                SaveConfigFile();
+                
                 Debug.Log("Make sure to use the list of keys to set the key! Reverting to Backslash");
                 return KeyCode.Backslash;
             }
