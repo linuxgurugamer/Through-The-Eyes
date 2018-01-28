@@ -9,7 +9,7 @@ namespace FirstPerson
     public static class ConfigUtil
     {
 
-		static string configPath = KSP.IO.IOUtils.GetFilePathFor(typeof(ThroughTheEyes), "options.cfg").Replace("/", System.IO.Path.DirectorySeparatorChar.ToString());
+        static string configPath = "GameData/ThroughTheEyes/PluginData/options.cfg";
         static ConfigNode cfg;
 
 
@@ -22,31 +22,7 @@ namespace FirstPerson
 				cfg.Save(configPath);
                 Debug.Log("No config found. Writing one.");
             }
-            if (!cfg.HasValue("disableMapView"))
-            {
-                cfg.AddValue("disableMapView", "false");
-				cfg.Save(configPath);
-                Debug.Log("No disableMapView value found. Adding one.");
-            }
-
-            if (!cfg.HasValue("forceIVA"))
-            {
-                cfg.AddValue("forceIVA", "false");
-				cfg.Save(configPath);
-                Debug.Log("No forceIVA value found. Making one");
-            }
-            if (!cfg.HasValue("forceEVA"))
-            {
-                cfg.AddValue("forceEVA", "false");
-				cfg.Save(configPath);
-                Debug.Log("No forceEVA value found. Making one");
-            }
-			if (!cfg.HasValue("showSightAngle"))
-			{
-				cfg.AddValue("showSightAngle", "true");
-				cfg.Save(configPath);
-				Debug.Log("No showSightAngle value found. Making one");
-			}
+            
             if (!cfg.HasValue("toggleFirstPersonKey"))
             {
                 cfg.AddValue("toggleFirstPersonKey", "default");
@@ -150,75 +126,28 @@ namespace FirstPerson
 
         public static bool ForceEVA()
         {
-            checkConfig();
-
-            bool isForced;
-            if (!Boolean.TryParse(cfg.GetValue("forceEVA"), out isForced))
-            {
-                cfg.SetValue("forceEVA", "false");
-				cfg.Save(configPath);
-                Debug.Log("Set forceIVA to all lowercase true or false! Reverting to false.");
-                return false;
-            }
-            else
-            {
-                return isForced;
-            }
+            return HighLogic.CurrentGame.Parameters.CustomParams<TTE>().forceEVA;
         }
 
         public static bool ForceIVA()
         {
-            checkConfig();
-
-            bool isForced;
-            if (!Boolean.TryParse(cfg.GetValue("forceIVA"), out isForced))
-            {
-                cfg.SetValue("forceIVA", "false");
-				cfg.Save(configPath);
-                Debug.Log("Set forceIVA to all lowercase true or false! Reverting to false.");
-                return false;
-            }
-            else
-            {
-                return isForced;
-            }
+            return HighLogic.CurrentGame.Parameters.CustomParams<TTE>().forceIVA;
         }
 
-		public static bool ShowSightAngle()
-		{
-			checkConfig();
+        public static bool ForceIVABeforeLaunch()
+        {
+            return HighLogic.CurrentGame.Parameters.CustomParams<TTE>().forceIVABeforeLaunch;
+        }
 
-			bool show;
-			if (!Boolean.TryParse(cfg.GetValue("showSightAngle"), out show))
-			{
-				cfg.SetValue("showSightAngle", "true");
-				cfg.Save(configPath);
-				Debug.Log("Set showSightAngle to all lowercase true or false! Reverting to true.");
-				return true;
-			}
-			else
-			{
-				return show;
-			}
+
+        public static bool ShowSightAngle()
+		{
+            return HighLogic.CurrentGame.Parameters.CustomParams<TTE>().showSightAngle;
 		}
 
-        public static bool checkMapView()
+        public static bool DisableMapView()
         {
-            checkConfig();
-
-            bool disable;
-            if (!Boolean.TryParse(cfg.GetValue("disableMapView"), out disable))
-            {
-                cfg.SetValue("disableMapView", "false");
-				cfg.Save(configPath);
-                Debug.Log("Make sure to set disableMapView to all lowercase true or false!");
-                return false;
-            }
-            else
-            {
-                return disable;
-            }
-
+            return HighLogic.CurrentGame.Parameters.CustomParams<TTE>().disableMapView;
         }
 
         public static KeyCode checkKeys()

@@ -8,7 +8,7 @@ namespace FirstPerson
     class ThroughTheEyes : MonoBehaviour
     {
 
-        bool disableMapView, forceIVA;
+        //bool disableMapView;
         KeyCode reviewDataKey, recoverKey;
 		static KeyCode EVAKey = ConfigUtil.EVAKey(GameSettings.CAMERA_MODE.primary.code);
         CameraManager.CameraMode flight = CameraManager.CameraMode.Flight;
@@ -39,7 +39,7 @@ namespace FirstPerson
 			} else {
 				keyDisabler.restoreKey(KeyDisabler.eKeyCommand.CAMERA_NEXT, KeyDisabler.eDisableLockSource.MainModule);
 			}
-			if (disableMapView) {
+			if (ConfigUtil.DisableMapView()) {
 				keyDisabler.disableKey(KeyDisabler.eKeyCommand.MAP_VIEW, KeyDisabler.eDisableLockSource.MainModule);
 			}
 		}
@@ -48,13 +48,13 @@ namespace FirstPerson
         {
 			CameraManager camManage = CameraManager.Instance;
 
-			if (externalMaintenainceAvailable(pVessel)) { return; }
+			if (!ConfigUtil.ForceIVABeforeLaunch() && externalMaintenainceAvailable(pVessel)) { return; }
             if (!pVessel.isEVA)
 			{
                 if (pVessel.GetCrewCount() > 0)
                 {
 
-                    if (disableMapView)
+                    if (ConfigUtil.DisableMapView())
                     {
                         if (camManage.currentCameraMode == flight || camManage.currentCameraMode == map)
                         {
@@ -69,11 +69,13 @@ namespace FirstPerson
                     }
 
                 }
+#if false
                 else if (pVessel.GetCrewCount() < 1)
                 {
 
 
                 }
+#endif
             }
         }
         
@@ -126,20 +128,18 @@ namespace FirstPerson
         {
 
 			keyDisabler = KeyDisabler.instance;
-			
+
             /*GameEvents.onLaunch.Add((v) =>
             {
-                if (forceIVA) { CameraManager.Instance.SetCameraIVA(); disableKeys(); }
+                if (ConfigUtil.ForceIVA()) { CameraManager.Instance.SetCameraIVA(); disableKeys(); }
             });*/
 
-			GameEvents.onVesselChange.Add(onVesselChange);
+            GameEvents.onVesselChange.Add(onVesselChange);
 			GameEvents.OnCameraChange.Add(OnCameraChange);
 			GameEvents.OnIVACameraKerbalChange.Add(OnIVACameraKerbalChange);
 			GameEvents.onGameSceneLoadRequested.Add(onGameSceneLoadRequested);
 
 			reviewDataKey = ConfigUtil.checkKeys();
-			forceIVA = ConfigUtil.ForceIVA();
-			disableMapView = ConfigUtil.checkMapView();
 			recoverKey = ConfigUtil.RecoverKey();
 			keyDisabler.restoreAllKeys();
         }
@@ -148,9 +148,10 @@ namespace FirstPerson
         {
             Vessel pVessel = FlightGlobals.ActiveVessel;
             CameraManager flightCam = CameraManager.Instance;
+           
             if (HighLogic.LoadedSceneIsFlight && pVessel != null && pVessel.isActiveVessel && pVessel.state != Vessel.State.DEAD)
             {
-                if (forceIVA)
+                if (ConfigUtil.ForceIVA())
                 {
                     if (HighLogic.CurrentGame.Parameters.Flight.CanIVA)
                     {

@@ -34,12 +34,14 @@
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
     <Compile Include="FirstPersonCameraManager.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CameraState.cs" />
     <Compile Include="ConfigUtil.cs" />
     <Compile Include="DebugUtils.cs" />
     <Compile Include="FPGUI.cs" />
     <Compile Include="KeyControls.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="ThroughTheEyes.cs" />
     <Compile Include="FirstPersonEVA.cs" />
     <Compile Include="KeyDisabler.cs" />
@@ -83,14 +85,9 @@
     <PostBuildEvent>
 start /D D:\Users\jbb\github\Through-The-Eyes /WAIT deploy.bat  $(TargetDir) $(TargetFileName)
 
-
-
 if $(ConfigurationName) == Release (
-
-     start /D D:\Users\jbb\github\Through-The-Eyes /WAIT buildRelease.bat $(TargetDir) $(TargetFileName)
-
-)
-</PostBuildEvent>
+	start /D D:\Users\jbb\github\Through-The-Eyes /WAIT buildRelease.bat $(TargetDir) $(TargetFileName)
+)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

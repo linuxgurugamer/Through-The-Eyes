@@ -1,3 +1,15 @@
+2.0.1
+	moved some options into setting sscreen:
+		forceEVA
+		showSightAngle
+		forceIVA
+		disableMapView
+	Moved key options in the ThroughTheEyes/PluginData directory
+	Added option to force IVA before launch
+
+2.0.0.3
+	Adoption by Linuxgurugamer
+	Released for 1.3.1
 
 ==================== Following from release by @Virindi ==========================
 2.0.0.2

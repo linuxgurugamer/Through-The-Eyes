@@ -43,9 +43,9 @@ namespace FirstPerson
 		{
 			if (!imgr.fpCameraManager.isFirstPerson)
 				return;
-			
-			//EVA pack throttle control
-			if (GameSettings.THROTTLE_UP.GetKey ())
+
+            //EVA pack throttle control
+            if (GameSettings.THROTTLE_UP.GetKey ())
 				imgr.state.eva_throttle += Time.fixedDeltaTime;
 			else if (GameSettings.THROTTLE_DOWN.GetKey ())
 				imgr.state.eva_throttle -= Time.fixedDeltaTime;
@@ -54,11 +54,12 @@ namespace FirstPerson
 			else if (GameSettings.THROTTLE_FULL.GetKey ())
 				imgr.state.eva_throttle = 1f;
 			imgr.state.eva_throttle = Mathf.Clamp (imgr.state.eva_throttle, 0.05f, 1f);
+
 		}
 
 		void evt_OnLateUpdate(object sender, EventArgs none)
 		{
-			if (!imgr.fpCameraManager.isFirstPerson)
+            if (!imgr.fpCameraManager.isFirstPerson)
 				return;
 
 			//EVA pack throttle display
@@ -66,6 +67,7 @@ namespace FirstPerson
 			if (throttlegauge_ == null)
 				throttlegauge_ = (KSP.UI.Screens.Flight.ThrottleGauge)MonoBehaviour.FindObjectOfType (typeof(KSP.UI.Screens.Flight.ThrottleGauge));
 			throttlegauge_.gauge.SetValue (imgr.state.eva_throttle);
+
 		}
 
 		public void evtHook_PreOnFixedUpdate (KerbalEVA eva)
