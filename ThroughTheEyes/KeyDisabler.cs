@@ -35,12 +35,12 @@ namespace FirstPerson
 			KeySaver[eKeyCommand.CAMERA_NEXT] = new KeyCode[] { GameSettings.CAMERA_NEXT.primary.code, GameSettings.CAMERA_NEXT.secondary.code };
 			KeySaver[eKeyCommand.MAP_VIEW] = new KeyCode[] { GameSettings.MAP_VIEW_TOGGLE.primary.code, GameSettings.MAP_VIEW_TOGGLE.secondary.code };
 
-			/*
-			KSPLog.print(string.Format("KeyDisabler: {0}, {1}, {2}, {3}, {4}, {5}", GameSettings.CAMERA_MODE.primary.code, GameSettings.CAMERA_MODE.secondary.code,
+			
+			Log.Info(string.Format("KeyDisabler: {0}, {1}, {2}, {3}, {4}, {5}", GameSettings.CAMERA_MODE.primary.code, GameSettings.CAMERA_MODE.secondary.code,
 				GameSettings.CAMERA_NEXT.primary.code, GameSettings.CAMERA_NEXT.secondary.code,
 				GameSettings.MAP_VIEW_TOGGLE.primary.code, GameSettings.MAP_VIEW_TOGGLE.secondary.code
 				));
-			*/
+			
 		}
 
 		static KeyDisabler inst = null;
@@ -59,7 +59,7 @@ namespace FirstPerson
 
 		public void disableKey(eKeyCommand index, eDisableLockSource source)
 		{
-			if (KeyLocks.ContainsKey (index) && KeyLocks[index].Count > 0) {
+            if (KeyLocks.ContainsKey (index) && KeyLocks[index].Count > 0) {
 				//Already locked.
 				if (!KeyLocks [index].Contains (source))
 					KeyLocks [index].Add (source);
@@ -70,9 +70,10 @@ namespace FirstPerson
 				KeyEnumToClassTranslator [index].primary = new KeyCodeExtended(KeyCode.None);
 				KeyEnumToClassTranslator [index].secondary = new KeyCodeExtended(KeyCode.None);
 			}
-		}
 
-		public void restoreKey(eKeyCommand index, eDisableLockSource source)
+        }
+
+        public void restoreKey(eKeyCommand index, eDisableLockSource source)
 		{
 			//Make sure we hold a lock.
 			if (!KeyLocks.ContainsKey (index))
@@ -85,20 +86,37 @@ namespace FirstPerson
 				KeyEnumToClassTranslator [index].primary = new KeyCodeExtended(KeySaver [index] [0]);
 				KeyEnumToClassTranslator [index].secondary = new KeyCodeExtended(KeySaver [index] [1]);
 			}
-		}
-
-		public void restoreAllKeys()
+        }
+#if false
+        public void disableAllKeys(eDisableLockSource source)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                eKeyCommand index = (eKeyCommand)i;
+                if (!KeyLocks.ContainsKey(index))
+                    KeyLocks[index] = new List<eDisableLockSource>();
+                if (!KeyLocks[index].Contains(source))
+                {
+                    KeyLocks[index].Add(source);
+                    KeyEnumToClassTranslator[index].primary = new KeyCodeExtended(KeyCode.None);
+                    KeyEnumToClassTranslator[index].secondary = new KeyCodeExtended(KeyCode.None);                   
+                }
+            }
+        }
+#endif
+        public void restoreAllKeys()
 		{
 			foreach (KeyValuePair<eKeyCommand, List<eDisableLockSource>> kp in KeyLocks) {
 				if (kp.Value.Count > 0) {
 					KeyEnumToClassTranslator [kp.Key].primary = new KeyCodeExtended(KeySaver [kp.Key] [0]);
 					KeyEnumToClassTranslator[kp.Key].secondary = new KeyCodeExtended(KeySaver[kp.Key][1]);
+                    Log.Info("restoreAllKeys()");
 				}
 				kp.Value.Clear ();
 			}
-		}
+        }
 
-		public void restoreAllKeys(eDisableLockSource source)
+        public void restoreAllKeys(eDisableLockSource source)
 		{
 			foreach (KeyValuePair<eKeyCommand, List<eDisableLockSource>> kp in KeyLocks) {
 				if (kp.Value.Count > 0 && kp.Value.Contains(source)) {
@@ -106,13 +124,14 @@ namespace FirstPerson
 					if (kp.Value.Count == 0) {
 						KeyEnumToClassTranslator [kp.Key].primary = new KeyCodeExtended(KeySaver [kp.Key] [0]);
 						KeyEnumToClassTranslator [kp.Key].secondary = new KeyCodeExtended(KeySaver [kp.Key] [1]);
+                        Log.Info("restoreAllKeys, source: " + source.ToString());
 					}
 				}
 			}
-		}
+        }
 
 
 
-	}
+    }
 }
 

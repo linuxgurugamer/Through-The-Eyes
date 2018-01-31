@@ -1,10 +1,13 @@
+2.0.2
+	Fixed bug where the FirstPerson key was active while a flag was being deployed and editeed
+
 2.0.1
-	moved some options into setting sscreen:
+	moved some options into setting screen:
 		forceEVA
 		showSightAngle
 		forceIVA
 		disableMapView
-	Moved key options in the ThroughTheEyes/PluginData directory
+	Moved key options to the ThroughTheEyes/PluginData directory
 	Added option to force IVA before launch
 
 2.0.0.3

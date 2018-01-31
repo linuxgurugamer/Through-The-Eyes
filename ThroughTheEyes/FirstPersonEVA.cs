@@ -136,7 +136,7 @@ namespace FirstPerson
 					}
 					fpCameraManager.CheckAndSetFirstPerson(pVessel);
 				} 
-				if (!forceEVA && pVessel.isEVA) {
+                if (!ThroughTheEyes.CheckControlLocks() && !forceEVA && pVessel.isEVA) {
 					if (Input.GetKeyDown(toggleFirstPersonKey)) {
 						if (!fpCameraManager.isFirstPerson) {
 							fpCameraManager.saveCameraState(flightCam);

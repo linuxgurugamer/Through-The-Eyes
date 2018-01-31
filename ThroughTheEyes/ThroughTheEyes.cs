@@ -7,7 +7,6 @@ namespace FirstPerson
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     class ThroughTheEyes : MonoBehaviour
     {
-
         //bool disableMapView;
         KeyCode reviewDataKey, recoverKey;
 		static KeyCode EVAKey = ConfigUtil.EVAKey(GameSettings.CAMERA_MODE.primary.code);
@@ -15,7 +14,7 @@ namespace FirstPerson
         CameraManager.CameraMode IVA = CameraManager.CameraMode.IVA;
         CameraManager.CameraMode map = CameraManager.CameraMode.Map;
 
-		KeyDisabler keyDisabler;
+		public static KeyDisabler keyDisabler;
 
         void OnGUI()
         {
@@ -29,7 +28,6 @@ namespace FirstPerson
 
         public ThroughTheEyes()
         {
-         	
         }
 
 		void disableKeys() {
@@ -144,6 +142,29 @@ namespace FirstPerson
 			keyDisabler.restoreAllKeys();
         }
 
+        internal static bool CheckControlLocks()
+        {
+            // Fix for a bug in Linux where typing would still control game elements even if
+            // a textbox was focused.
+            if (GUIUtility.keyboardControl != 0)
+            {
+                Log.Info("GUIUtility.keyboardControl: " + GUIUtility.keyboardControl);
+                return true;
+            }
+            Log.Info("CheckControlLocks, siteRenameDialog: " + InputLockManager.GetControlLock("siteRenameDialog"));
+            Log.Info("CheckControlLocks, Flag_NoInterruptWhileDeploying: " + InputLockManager.GetControlLock("Flag_NoInterruptWhileDeploying"));
+            Log.Info("CheckControlLocks, FlagPlaqueDialog: " + InputLockManager.GetControlLock("FlagPlaqueDialog"));
+
+            if (InputLockManager.GetControlLock("siteRenameDialog") != ControlTypes.None ||
+                InputLockManager.GetControlLock("Flag_NoInterruptWhileDeploying") != ControlTypes.None |
+                InputLockManager.GetControlLock("FlagPlaqueDialog") != ControlTypes.None
+                )
+            {
+                return true;
+            }
+            
+            return false;
+        }
         void Update()
         {
             Vessel pVessel = FlightGlobals.ActiveVessel;

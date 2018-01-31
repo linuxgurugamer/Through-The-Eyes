@@ -74,7 +74,7 @@ namespace FirstPerson
 		{
 			ReflectedMembers.Initialize ();
 
-			if ((FlightGlobals.ActiveVessel.situation != Vessel.Situations.SPLASHED
+            if ((FlightGlobals.ActiveVessel.situation != Vessel.Situations.SPLASHED
 			     //&& FlightGlobals.ActiveVessel.situation != Vessel.Situations.LANDED //Allow landed jetpack operation
 			)
 			     && FlightGlobals.ActiveVessel.evaController.JetpackDeployed) {
