@@ -1,5 +1,5 @@
 2.0.2
-	Fixed bug where the FirstPerson key was active while a flag was being deployed and editeed
+	Fixed bug where the FirstPerson key was active while a flag was being deployed and edited
 
 2.0.1
 	moved some options into setting screen:
