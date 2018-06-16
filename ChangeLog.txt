@@ -1,3 +1,10 @@
+2.0.2.2
+	Updated .version for all 1.4
+	Fixed errors in .version file
+
+2.0.2.1
+	Updated for 1.4.1
+
 2.0.2
 	Fixed bug where the FirstPerson key was active while a flag was being deployed and edited
 

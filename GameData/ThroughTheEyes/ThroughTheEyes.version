@@ -1,15 +1,30 @@
 {
   "NAME": "ThroughTheEyes",
-  "URL": "https://raw.githubusercontent.com/linuxgurugamerThrough-The-Eyes/master/ThroughTheEyes.version",
+  "URL": "https://raw.githubusercontent.com/linuxgurugamer/Through-The-Eyes/master/ThroughTheEyes.version",
+  "DOWNLOAD": "https://spacedock.info/mod/1560/",
+  "GITHUB": {
+    "USERNAME": "linuxgurugamer",
+    "REPOSITORY": "Through-The-Eyes"
+  },
   "VERSION": {
     "MAJOR": 2,
     "MINOR": 0,
     "PATCH": 2,
-    "BUILD": 1
+    "BUILD": 2
   },
   "KSP_VERSION": {
     "MAJOR": 1,
     "MINOR": 4,
     "PATCH": 1
+  },
+  "KSP_VERSION_MIN": {
+    "MAJOR": 1,
+    "MINOR": 4,
+    "PATCH": 1
+  },
+  "KSP_VERSION_MAX": {
+    "MAJOR": 1,
+    "MINOR": 4,
+    "PATCH": 99
   }
 }
