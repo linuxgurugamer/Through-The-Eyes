@@ -22,8 +22,6 @@ public class TTE : GameParameters.CustomParameterNode
     public override int SectionOrder { get { return 1; } }
     public override bool HasPresets { get { return false; } }
 
-    [GameParameters.CustomParameterUI("Use Blizzy toolbar if installed")]
-    public bool useBlizzy = false;
 
     [GameParameters.CustomParameterUI("Force EVA")]
     public bool forceEVA = false;
