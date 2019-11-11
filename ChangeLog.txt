@@ -1,3 +1,10 @@
+ChangeLog
+
+2.0.3
+	Added InstallChecker
+	Updated AssemblyVersion
+	Updated for KSP 1.8
+
 2.0.2.5
 	Removed the useBlizzy option from the settings page as it wasn't being used
 
