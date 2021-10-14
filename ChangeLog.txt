@@ -1,5 +1,9 @@
 ChangeLog
 
+2.0.3.1
+	Added AssemblyFileVersion
+	Updated version file for 1.12
+
 2.0.3
 	Added InstallChecker
 	Updated AssemblyVersion
