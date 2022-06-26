@@ -84,7 +84,10 @@ namespace FirstPerson
 			//enableRenderers(pVessel.transform, false);
 			enableRenderers(eva.transform, false);
 
-			flightCam.mainCamera.nearClipPlane = 0.01f;
+			float clipScale = flightCam.mainCamera.farClipPlane / flightCam.mainCamera.nearClipPlane;
+
+			flightCam.mainCamera.nearClipPlane = 0.1f;
+			flightCam.mainCamera.farClipPlane = flightCam.mainCamera.nearClipPlane * clipScale;
 
 			isFirstPerson = true;
 			if (showSightAngle) {
