@@ -114,7 +114,7 @@ namespace FirstPerson
 				    renderer.name.Contains("upTeeth") ||
 				    renderer.name.Contains("downTeeth") ||
 				    renderer.name.Contains("pupil") ||
-					renderer.name.Contains("ponytail") //Females
+					renderer.name.Contains("kerbalGirl_mesh") //Females
 				   ) {
 					renderer.enabled = enable;
 				}
