@@ -1,5 +1,12 @@
 ChangeLog
 
+2.0.3.2
+	Thanks to JonnyOThan for these fixes:
+		hide female heads properly
+		camera near/far plane ratio needs to stay consistent 
+		Expose near plane distance so other mods can configure it
+		bump out the near plane distance a little so that this doesn't limit the far distance so much
+
 2.0.3.1
 	Added AssemblyFileVersion
 	Updated version file for 1.12
