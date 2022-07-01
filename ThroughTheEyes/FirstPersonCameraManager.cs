@@ -11,6 +11,7 @@ namespace FirstPerson
 	{
 		public bool isFirstPerson = false;
 		public KerbalEVA currentfpeva = null;
+		public float nearPlaneDistance = 0.1f;
 		
 		private bool showSightAngle;
 		private CameraState cameraState;
@@ -84,7 +85,10 @@ namespace FirstPerson
 			//enableRenderers(pVessel.transform, false);
 			enableRenderers(eva.transform, false);
 
-			flightCam.mainCamera.nearClipPlane = 0.01f;
+			float clipScale = flightCam.mainCamera.farClipPlane / flightCam.mainCamera.nearClipPlane;
+
+			flightCam.mainCamera.nearClipPlane = nearPlaneDistance;
+			flightCam.mainCamera.farClipPlane = flightCam.mainCamera.nearClipPlane * clipScale;
 
 			isFirstPerson = true;
 			if (showSightAngle) {
