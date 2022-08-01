@@ -1,5 +1,9 @@
 ChangeLog
 
+2.0.3.3
+	Thanks to JonnyOThan for this:
+		store old far plane so it doesn't get progressively shorter
+
 2.0.3.2
 	Thanks to JonnyOThan for these fixes:
 		hide female heads properly
