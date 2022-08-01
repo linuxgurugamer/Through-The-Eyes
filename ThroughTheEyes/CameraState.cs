@@ -17,6 +17,7 @@ namespace FirstPerson
 		private float origMinHeightAtMaxDist=1000f;
 		private float origMinHeightAtMinDist=.3f;
 		private float origNearClipPlane = 0.5f;
+		private float origFarClipPlane;
 		private Transform origParent = null;
 
 		public void saveState(FlightCamera flightCam) {
@@ -30,6 +31,7 @@ namespace FirstPerson
 			origMaxDistance = flightCam.maxDistance;
 			origStartDistance = flightCam.startDistance;
 			origNearClipPlane = flightCam.mainCamera.nearClipPlane;
+			origFarClipPlane = flightCam.mainCamera.farClipPlane;
 			origParent = flightCam.transform.parent;
 		}
 
@@ -46,6 +48,7 @@ namespace FirstPerson
 			flightCam.startDistance = origStartDistance;
 			flightCam.SetDistanceImmediate(origStartDistance);
 			flightCam.mainCamera.nearClipPlane = origNearClipPlane;
+			flightCam.mainCamera.farClipPlane = origFarClipPlane;
 			flightCam.transform.parent = origParent;
 		}
 
