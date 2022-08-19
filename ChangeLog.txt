@@ -1,5 +1,9 @@
 ChangeLog
 
+2.0.4
+	Thanks to user @JonnyOThan for this:
+		TTE now works in command chairs
+
 2.0.3.3
 	Thanks to JonnyOThan for this:
 		store old far plane so it doesn't get progressively shorter
