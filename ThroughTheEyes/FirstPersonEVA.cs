@@ -37,7 +37,7 @@ namespace FirstPerson
 			if (FlightGlobals.fetch == null)
 				return;
 			
-			if (v != null && v == FlightGlobals.ActiveVessel && v.isEVA) {
+			if (v != null && v == FlightGlobals.ActiveVessel && fpCameraManager.isFirstPerson) {
 				fpCameraManager.resetCamera (v);
 			}
 
@@ -48,7 +48,7 @@ namespace FirstPerson
 			fpCameraManager.resetCamera((Vessel)from);
 			lastHookedVessel = null;
 
-			if (to != null && to.isEVA) {
+			if (to != null && ThroughTheEyes.GetKerbalEVAFromVessel(to) != null) {
 				CameraManager.Instance.SetCameraFlight();
 			}
 
@@ -114,16 +114,17 @@ namespace FirstPerson
 
 			if (pVessel == null)
 				return;
-			if (pVessel.isEVA && !pVessel.packed && pVessel.loaded && pVessel.evaController != null) {
-				if (pVessel != lastHookedVessel) {
-					lastHookedVessel = pVessel;
 
-					//KSPLog.print (string.Format("{0} switched to, hooking vessel for general hooks.", pVessel.GetName()));
-					EVABoundFix.Hook (pVessel.evaController);
-				}
+			if (!pVessel.packed && pVessel.loaded && pVessel != lastHookedVessel) {
+				lastHookedVessel = pVessel;
+
+				
+
+				//KSPLog.print (string.Format("{0} switched to, hooking vessel for general hooks.", pVessel.GetName()));
+				EVABoundFix.Hook (ThroughTheEyes.GetKerbalEVAFromVessel(pVessel));
 			}
 
-			if (FlightGlobals.ActiveVessel.isEVA && fpCameraManager.isFirstPerson && needCamReset) {
+			if (fpCameraManager.isFirstPerson && needCamReset) {
 				fpCameraManager.isFirstPerson = false;
 				fpCameraManager.CheckAndSetFirstPerson(pVessel);
 			}
@@ -136,7 +137,7 @@ namespace FirstPerson
 					}
 					fpCameraManager.CheckAndSetFirstPerson(pVessel);
 				} 
-                if (!ThroughTheEyes.CheckControlLocks() && !forceEVA && pVessel.isEVA) {
+                if (!ThroughTheEyes.CheckControlLocks() && !forceEVA) {
 					if (Input.GetKeyDown(toggleFirstPersonKey)) {
 						if (!fpCameraManager.isFirstPerson) {
 							fpCameraManager.saveCameraState(flightCam);

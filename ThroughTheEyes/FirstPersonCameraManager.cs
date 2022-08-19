@@ -37,25 +37,27 @@ namespace FirstPerson
 
 			return instance;
 		}
-		
+
 		public void CheckAndSetFirstPerson(Vessel pVessel)
 		{
 			FlightCamera flightCam = FlightCamera.fetch;
 
-			if (pVessel.isEVA)
+			var kerbalEVA = ThroughTheEyes.GetKerbalEVAFromVessel(pVessel);
+
+			if (kerbalEVA != null)
 			{
 				if (!isFirstPerson
 				    && !pVessel.packed //this prevents altering camera until EVA is unpacked or else various weird effects are possible
 				   )
 				{
-					currentfpeva = pVessel.evaController;
-					SetFirstPersonCameraSettings (pVessel.evaController);
+					currentfpeva = kerbalEVA;
+					SetFirstPersonCameraSettings (currentfpeva);
 
 					//Enter first person
-					FirstPersonEVA.instance.state.Reset (pVessel.evaController);
+					FirstPersonEVA.instance.state.Reset (currentfpeva);
 
 					if (OnEnterFirstPerson != null)
-						OnEnterFirstPerson (pVessel.evaController);
+						OnEnterFirstPerson (currentfpeva);
 				}
 
 				KeyDisabler.instance.disableKey (KeyDisabler.eKeyCommand.CAMERA_NEXT, KeyDisabler.eDisableLockSource.FirstPersonEVA);
@@ -125,14 +127,6 @@ namespace FirstPerson
 			}
 		}
 
-		private void EnableRenderingOnPrevious(Vessel vessel)
-		{
-			if (vessel != null && vessel.isEVA)
-			{
-				enableRenderers(FlightGlobals.ActiveVessel.transform, true);
-			}
-		}
-
 		public void resetCamera(Vessel previousVessel) {
 			ReflectedMembers.Initialize ();
 
@@ -155,7 +149,12 @@ namespace FirstPerson
 
 			isFirstPerson = false;
 			
-			EnableRenderingOnPrevious(previousVessel);
+			KerbalEVA previousEVA = ThroughTheEyes.GetKerbalEVAFromVessel(previousVessel);
+
+			if (previousEVA != null)
+			{
+				enableRenderers(previousEVA.transform, true);
+			}
 
 			//Exit first person
 
@@ -164,14 +163,14 @@ namespace FirstPerson
 			currentfpeva = null;
 
 			//Restore stuff that changed in the evacontroller
-			if (previousVessel != null && previousVessel.evaController != null) {
+			if (previousEVA != null) {
 				//Axis control settings
-				ReflectedMembers.eva_manualAxisControl.SetValue (previousVessel.evaController, false);
-				ReflectedMembers.eva_cmdRot.SetValue (previousVessel.evaController, Vector3.zero);
+				ReflectedMembers.eva_manualAxisControl.SetValue (previousEVA, false);
+				ReflectedMembers.eva_cmdRot.SetValue (previousEVA, Vector3.zero);
 
 				//Pack power (from fine controls)
-				previousVessel.evaController.rotPower = 1f;
-				previousVessel.evaController.linPower = 0.3f;
+				previousEVA.rotPower = 1f;
+				previousEVA.linPower = 0.3f;
 			}
 
 			KeyDisabler.instance.restoreAllKeys (KeyDisabler.eDisableLockSource.FirstPersonEVA);
