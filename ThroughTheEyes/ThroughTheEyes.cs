@@ -16,14 +16,33 @@ namespace FirstPerson
 
 		public static KeyDisabler keyDisabler;
 
-        void OnGUI()
+		public static KerbalEVA GetKerbalEVAFromVessel(Vessel vessel)
+		{
+			if (vessel == null)
+			{
+				return null;
+			}
+
+			// if the vessel IS a kerbal, we're done
+			if (vessel.isEVA)
+			{
+				return vessel.evaController;
+			}
+
+			// try to find a kerbal in a commmand chair
+			var referenceTransformPart = vessel.GetReferenceTransformPart();
+			if (referenceTransformPart != null)
+			{
+				var kerbalModule = referenceTransformPart.FindModuleImplementing<KerbalEVA>();
+
+				return kerbalModule;
+			}
+
+			return null;
+		}
+
+		void OnGUI()
         {
-            if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel.isEVA)
-            {
-                Vessel pVessel = FlightGlobals.ActiveVessel;
-				KerbalEVA keva = FlightGlobals.ActiveVessel.evaController;
-                int fuelPercent = (int)(keva.Fuel / keva.FuelCapacity);
-            }
         }
 
         public ThroughTheEyes()
@@ -78,7 +97,7 @@ namespace FirstPerson
         }
         
         private void onVesselChange(Vessel v) {
-			if (v.isEVA) {
+			if (ThroughTheEyes.GetKerbalEVAFromVessel(v)) {
 				CameraManager.Instance.SetCameraFlight(); //Important. Without this switching to EVA from IVA would lead to heavy errors on attempts to return to IVA of originating vessel
 			}        	
         }
