@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace FirstPerson
@@ -11,12 +12,8 @@ namespace FirstPerson
 	{
 		public bool isFirstPerson = false;
 		public KerbalEVA currentfpeva = null;
-		public float nearPlaneDistance = 0.1f;
 		
 		private bool showSightAngle;
-		private CameraState cameraState;
-		private float yaw = 0f;
-		private float pitch = 0f;
 		private const float MAX_LATITUDE = 45.0F; // Don't allow further motion than these (degrees)
 		private const float MAX_AZIMUTH = 60.0F;
 		private FPGUI fpgui;
@@ -28,11 +25,13 @@ namespace FirstPerson
 		public event delEvtEVA OnEnterFirstPerson;
 		public event delEvtEVA OnExitFirstPerson;
 
+		private static FieldInfo InternalCamera_currentRot = typeof(InternalCamera).GetField("currentRot", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo InternalCamera_currentPitch = typeof(InternalCamera).GetField("currentPitch", BindingFlags.Instance | BindingFlags.NonPublic);
+
 		private FirstPersonCameraManager(){	}
 		
 		public static FirstPersonCameraManager initialize(bool showSightAngle = true) {
 			FirstPersonCameraManager instance = new FirstPersonCameraManager();
-			instance.cameraState = new CameraState();
 			instance.showSightAngle = showSightAngle;
 
 			return instance;
@@ -40,8 +39,6 @@ namespace FirstPerson
 
 		public void CheckAndSetFirstPerson(Vessel pVessel)
 		{
-			// FlightCamera flightCam = FlightCamera.fetch;
-
 			var kerbalEVA = ThroughTheEyes.GetKerbalEVAFromVessel(pVessel);
 
 			if (kerbalEVA != null)
@@ -68,10 +65,6 @@ namespace FirstPerson
 				{
 					resetCamera(null);
 				}
-				else
-				{
-					// cameraState.saveState(flightCam);
-				}
 
 				KeyDisabler.instance.restoreKey (KeyDisabler.eKeyCommand.CAMERA_NEXT, KeyDisabler.eDisableLockSource.FirstPersonEVA);
 			}
@@ -79,46 +72,27 @@ namespace FirstPerson
 
 		public void SetFirstPersonCameraSettings(KerbalEVA eva)
 		{
-			var camera = InternalCamera.Instance;
-
 			FlightCamera flightCam = FlightCamera.fetch;
+			InternalCamera internalCam = InternalCamera.Instance;
 
-			// flightCam.transform.parent = eva.transform;
-			//flightCam.transform.parent = FlightGlobals.ActiveVessel.transform;
-
-			//enableRenderers(pVessel.transform, false);
 			enableRenderers(eva.transform, false);
 
 			flightCam.EnableCamera();
 			flightCam.DeactivateUpdate();
 			flightCam.transform.parent = eva.transform;
 
-			InternalCamera.Instance.SetTransform(eva.transform, true);
-			InternalCamera.Instance.EnableCamera();
-			// InternalCamera.Instance.enabled = false; // don't let the InternalCamera.Update logic run
-
-			// float clipScale = flightCam.mainCamera.farClipPlane / flightCam.mainCamera.nearClipPlane;
-
-			// flightCam.mainCamera.nearClipPlane = nearPlaneDistance;
-			// flightCam.mainCamera.farClipPlane = flightCam.mainCamera.nearClipPlane * clipScale;
+			internalCam.SetTransform(eva.transform, true);
+			internalCam.EnableCamera();
+			internalCam.maxRot = MAX_LATITUDE;
+			internalCam.maxPitch = MAX_AZIMUTH;
+			internalCam.minPitch = -MAX_AZIMUTH;
 
 			isFirstPerson = true;
 			if (showSightAngle) {
-				fpgui = camera.gameObject.AddOrGetComponent<FPGUI>();
+				fpgui = flightCam.gameObject.AddOrGetComponent<FPGUI>();
 			}
-			// flightCam.SetTargetNone();
-			// flightCam.DeactivateUpdate();
-			viewToNeutral();
-			reorient();
-		}
-
-		void override_idle_fl_OnEnter(KFSMState st)
-		{
 			
-		}
-		
-		public void saveCameraState(FlightCamera flightCam) {
-			cameraState.saveState(flightCam);
+			viewToNeutral();
 		}
 		
 		private void enableRenderers(Transform transform, bool enable) {
@@ -136,7 +110,9 @@ namespace FirstPerson
 				}
 				else
 				{
-					renderer.gameObject.layer = enable ? 17 : 20;
+					const int LAYER_EVA = 17;
+					const int LAYER_IVA = 20;
+					renderer.gameObject.layer = enable ? LAYER_EVA : LAYER_IVA;
 				}
 			}
 		}
@@ -152,15 +128,13 @@ namespace FirstPerson
 
 			Vessel pVessel = FlightGlobals.ActiveVessel;
 			FlightCamera flightCam = FlightCamera.fetch;
+			InternalCamera internalCam = InternalCamera.Instance;
 
-			// cameraState.recallState(flightCam);
+			internalCam.DisableCamera();
+			internalCam.maxRot = 60f;
+			internalCam.maxPitch = 60f;
+			internalCam.minPitch = -30f;
 
-			InternalCamera.Instance.DisableCamera();
-
-			if (FlightGlobals.ActiveVessel != null)
-			{
-				// flightCam.SetTargetTransform(pVessel.transform);
-			}
 			flightCam.ActivateUpdate();
 			flightCam.transform.SetParent(flightCam.GetPivot());
 
@@ -201,34 +175,15 @@ namespace FirstPerson
 		
 		public void updateGUI() {
 			if (isFirstPerson && fpgui != null) {
-				fpgui.yawAngle = -yaw;
-				fpgui.pitchAngle = -pitch;
+				fpgui.yawAngle = (float)InternalCamera_currentRot.GetValue(InternalCamera.Instance);
+				fpgui.pitchAngle = -(float)InternalCamera_currentPitch.GetValue(InternalCamera.Instance);
 			}
 		}
 		
 		public void viewToNeutral() {
-			yaw = 0f;
-			pitch = 0f;
+			InternalCamera.Instance.ManualReset(true);
 		}
 		
-		public void addYaw(float amount) {
-			// yaw = Mathf.Clamp(yaw + amount, -MAX_AZIMUTH, MAX_AZIMUTH);
-			/*if (Mathf.Abs(yaw) > MAX_AZIMUTH) {
-				this.yaw = MAX_AZIMUTH * Mathf.Sign(this.yaw);
-			} */
-		}
-		
-		public void addPitch(float amount) {
-			// pitch = Mathf.Clamp(pitch + amount, -MAX_LATITUDE, MAX_LATITUDE);
-			/*if (Mathf.Abs(pitch) > MAX_LATITUDE) {
-				this.pitch = MAX_LATITUDE * Mathf.Sign(this.pitch);
-			}*/
-		}
-		
-		private Quaternion getFPCameraRotation() {
-			return Quaternion.Euler(0.0F, yaw, 0.0F) * Quaternion.Euler(-pitch, 0.0F, 0.0F);
-		}
-
 		private Vector3 getFPCameraPosition(Quaternion rotation, KerbalEVA eva) {
 			Vector3 ret = headLocation + rotation * eyeOffset;
 			if ((eva != null) && (eva.part != null)) {
@@ -242,30 +197,5 @@ namespace FirstPerson
 			}
 			return ret;
 		}
-
-		public void reorient() {
-			Quaternion rotation = getFPCameraRotation();
-			Vector3 cameraForward = rotation * Vector3.forward;
-			Vector3 cameraUp = rotation * Vector3.up;
-			Vector3 cameraPosition = getFPCameraPosition(rotation, currentfpeva);
-			FlightCamera flightCam = FlightCamera.fetch;
-
-			//KSPLog.print ("prereorient cam fwd: " + flightCam.transform.forward.ToString () + ", maincam fwd: " + flightCam.mainCamera.transform.forward.ToString ());
-
-
-			//flightCam.transform.localRotation = Quaternion.LookRotation(cameraForward, cameraUp);
-			//flightCam.transform.localPosition = cameraPosition;
-			//flightCam.mainCamera.transform.localRotation = Quaternion.LookRotation(cameraForward, cameraUp);
-			//flightCam.mainCamera.transform.localPosition = cameraPosition;
-
-			// flightCam.transform.SetParent(currentfpeva.transform, false);
-			//flightCam.mainCamera.transform.parent = FlightGlobals.ActiveVessel.evaController.transform;
-			
-			// InternalCamera.Instance.transform.localRotation = flightCam.transform.localRotation;
-			// InternalCamera.Instance.transform.localPosition = cameraPosition;
-
-			//KSPLog.print (string.Format ("REORIENT Forward: {0}, Up: {1}, Position: {2}", cameraForward, cameraUp, cameraPosition));
-		}
-		
 	}
 }

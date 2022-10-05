@@ -140,7 +140,6 @@ namespace FirstPerson
                 if (!ThroughTheEyes.CheckControlLocks() && !forceEVA) {
 					if (Input.GetKeyDown(toggleFirstPersonKey)) {
 						if (!fpCameraManager.isFirstPerson) {
-							fpCameraManager.saveCameraState(flightCam);
 							fpCameraManager.CheckAndSetFirstPerson(pVessel);
 						} else {
 							fpCameraManager.resetCamera(pVessel);
@@ -154,7 +153,6 @@ namespace FirstPerson
 
 			if (fpCameraManager.isFirstPerson && resetivacamerabinding.GetKeyDown ()) {
 				fpCameraManager.viewToNeutral ();
-				fpCameraManager.reorient ();
 			}
 
 			if (OnUpdate != null)
@@ -163,27 +161,6 @@ namespace FirstPerson
 
 		void FixedUpdate()
 		{
-			if (fpCameraManager.isFirstPerson) {
-				if (Input.GetMouseButton(1)) { // Right Mouse Button Down
-					//Change the angles by the mouse movement
-					fpCameraManager.addYaw(Input.GetAxis("Mouse X") / Screen.width * mouseViewSensitivity);
-					fpCameraManager.addPitch(Input.GetAxis("Mouse Y") / Screen.height * mouseViewSensitivity);
-					fpCameraManager.reorient();
-					//state.kerballookrotation = FlightCamera.fetch.transform.rotation;
-				} //button held down
-
-				if (FlightGlobals.ActiveVessel.Landed && (GameSettings.EVA_back.GetKey() || GameSettings.EVA_forward.GetKey())) {
-					//fpCameraManager.viewToNeutral();
-					fpCameraManager.reorient();
-					//FlightCamera.fetch.transform.rotation = state.kerballookrotation;
-				}
-
-				if (FlightGlobals.ActiveVessel.Landed && (GameSettings.EVA_back.GetKeyUp() || GameSettings.EVA_forward.GetKeyUp())) {
-					//fpCameraManager.viewToNeutral();
-					fpCameraManager.reorient();
-				}
-			}
-
 			if (OnFixedUpdate != null)
 				OnFixedUpdate (this, null);
 		}
@@ -193,15 +170,14 @@ namespace FirstPerson
 			if (OnLateUpdate != null)
 				OnLateUpdate (this, null);
 
+			// the InternalCamera's update function will set the FlightCamera's transform according to InternalSpace rotations
+			// But we're actually using InternalCamera in world space, so just clean it up here
 			if (fpCameraManager.isFirstPerson)
 			{
 				FlightCamera.fetch.transform.localPosition = Vector3.zero;
 				FlightCamera.fetch.transform.localRotation = InternalCamera.Instance.transform.localRotation;
 			}
 		}
-
-
-
 	}
     
 }
