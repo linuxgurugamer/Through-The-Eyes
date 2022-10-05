@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace FirstPerson
 {
@@ -17,8 +18,8 @@ namespace FirstPerson
 		private const float MAX_LATITUDE = 45.0F; // Don't allow further motion than these (degrees)
 		private const float MAX_AZIMUTH = 60.0F;
 		private FPGUI fpgui;
-		
-		private Vector3 eyeOffset = Vector3.zero;//Vector3.forward * 0.1F; //Eyes don't exist at a point when you move your head
+
+		private Vector3 eyeOffset = Vector3.forward * -0.1F; // move the eye slightly backwards so that we don't have as many near-plane issues
 		private Vector3 headLocation = Vector3.up * .31f; // Where the centre of the head is
 
 		public delegate void delEvtEVA(KerbalEVA eva);
@@ -70,6 +71,19 @@ namespace FirstPerson
 			}
 		}
 
+		Transform GetOrCreateEyeTransform(KerbalEVA eva)
+		{
+			Transform result = eva.transform.Find("eyeTransform");
+			if (result != null) return result;
+
+			result = new GameObject("eyeTransform").transform;
+			result.localPosition = getFPCameraPosition(eva);
+			result.localRotation = Quaternion.identity;
+			result.SetParent(eva.transform, false);
+
+			return result;
+		}
+
 		public void SetFirstPersonCameraSettings(KerbalEVA eva)
 		{
 			FlightCamera flightCam = FlightCamera.fetch;
@@ -77,15 +91,19 @@ namespace FirstPerson
 
 			enableRenderers(eva.transform, false);
 
+			Transform eyeTransform = GetOrCreateEyeTransform(eva);
+
 			flightCam.EnableCamera();
 			flightCam.DeactivateUpdate();
-			flightCam.transform.parent = eva.transform;
+			flightCam.transform.parent = eyeTransform;
 
-			internalCam.SetTransform(eva.transform, true);
+			internalCam.SetTransform(eyeTransform, true);
 			internalCam.EnableCamera();
 			internalCam.maxRot = MAX_LATITUDE;
 			internalCam.maxPitch = MAX_AZIMUTH;
 			internalCam.minPitch = -MAX_AZIMUTH;
+			internalCam.minZoom = 1.0f;
+			internalCam.enabled = false;
 
 			isFirstPerson = true;
 			if (showSightAngle) {
@@ -134,6 +152,8 @@ namespace FirstPerson
 			internalCam.maxRot = 60f;
 			internalCam.maxPitch = 60f;
 			internalCam.minPitch = -30f;
+			internalCam.minZoom = 2.0f;
+			internalCam.enabled = true;
 
 			flightCam.ActivateUpdate();
 			flightCam.transform.SetParent(flightCam.GetPivot());
@@ -166,17 +186,49 @@ namespace FirstPerson
 
 			KeyDisabler.instance.restoreAllKeys (KeyDisabler.eDisableLockSource.FirstPersonEVA);
 		}
-		
+
 		public bool isCameraProperlyPositioned(FlightCamera flightCam) {
 			//Not a particularly elegant way to determine if camera isn't crapped by some background stock logic or change view attempts:
 			// return Vector3.Distance(flightCam.transform.localPosition, getFPCameraPosition(getFPCameraRotation(), currentfpeva)) < 0.001f;
 			return true;
 		}
 		
-		public void updateGUI() {
+		public void update() {
 			if (isFirstPerson && fpgui != null) {
 				fpgui.yawAngle = (float)InternalCamera_currentRot.GetValue(InternalCamera.Instance);
 				fpgui.pitchAngle = -(float)InternalCamera_currentPitch.GetValue(InternalCamera.Instance);
+			}
+
+			// the InternalCamera's update function will set the FlightCamera's transform according to InternalSpace rotations
+			// But we're actually using InternalCamera in world space, so run the update manually here and then fix the flightcamera transform
+			if (isFirstPerson)
+			{
+				// horrible hack - if right-clicking, force the camera mouse look to true so that the right-click will be interpreted as *unlocking* the mouse
+				if (Input.GetMouseButtonDown(1) && !CameraMouseLook.MouseLocked)
+				{
+					var mouseLocked = typeof(CameraMouseLook).GetField("mouseLocked", BindingFlags.Static | BindingFlags.NonPublic);
+					mouseLocked.SetValue(null, true);
+
+					// the flight camera's nearplane is so far away that the normal game logic won't hit the kerbal.  Try to open the PAW here.
+					if (!EventSystem.current.IsPointerOverGameObject())
+					{
+						Ray internalRay = InternalCamera.Instance.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+						if (Physics.Raycast(internalRay, out var hoveredPartHitInfo, 2.0f, Part.layerMask.value))
+						{
+							Part hoveredPart = FlightGlobals.GetPartUpwardsCached(hoveredPartHitInfo.collider.gameObject);
+
+							if (hoveredPart != null && hoveredPart.vessel == FlightGlobals.ActiveVessel)
+							{
+								UIPartActionController.Instance.SpawnPartActionWindow(hoveredPart);
+							}
+						}
+					}
+				}
+
+				InternalCamera.Instance.Update();
+
+				FlightCamera.fetch.transform.localPosition = Vector3.zero;
+				FlightCamera.fetch.transform.localRotation = InternalCamera.Instance.transform.localRotation;
 			}
 		}
 		
@@ -184,13 +236,13 @@ namespace FirstPerson
 			InternalCamera.Instance.ManualReset(true);
 		}
 		
-		private Vector3 getFPCameraPosition(Quaternion rotation, KerbalEVA eva) {
-			Vector3 ret = headLocation + rotation * eyeOffset;
+		private Vector3 getFPCameraPosition(KerbalEVA eva) {
+			Vector3 ret = headLocation + eyeOffset;
 			if ((eva != null) && (eva.part != null)) {
 				List<ProtoCrewMember> c = eva.part.protoModuleCrew;
 				if (c != null && c.Count > 0) {
 					if (c [0].gender == ProtoCrewMember.Gender.Female) {
-						ret += new Vector3 (GameSettings.FEMALE_EYE_OFFSET_X, GameSettings.FEMALE_EYE_OFFSET_Y, GameSettings.FEMALE_EYE_OFFSET_Z);
+						ret += new Vector3 (0, GameSettings.FEMALE_EYE_OFFSET_Y, 0);
 						//Female
 					}
 				}

@@ -147,8 +147,7 @@ namespace FirstPerson
 					}
 				}
 
-				fpCameraManager.updateGUI();
-
+				fpCameraManager.update();
 			}
 
 			if (fpCameraManager.isFirstPerson && resetivacamerabinding.GetKeyDown ()) {
@@ -169,14 +168,6 @@ namespace FirstPerson
 		{
 			if (OnLateUpdate != null)
 				OnLateUpdate (this, null);
-
-			// the InternalCamera's update function will set the FlightCamera's transform according to InternalSpace rotations
-			// But we're actually using InternalCamera in world space, so just clean it up here
-			if (fpCameraManager.isFirstPerson)
-			{
-				FlightCamera.fetch.transform.localPosition = Vector3.zero;
-				FlightCamera.fetch.transform.localRotation = InternalCamera.Instance.transform.localRotation;
-			}
 		}
 	}
     
