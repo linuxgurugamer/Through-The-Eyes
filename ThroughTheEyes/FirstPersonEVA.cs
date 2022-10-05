@@ -192,6 +192,12 @@ namespace FirstPerson
 		{
 			if (OnLateUpdate != null)
 				OnLateUpdate (this, null);
+
+			if (fpCameraManager.isFirstPerson)
+			{
+				FlightCamera.fetch.transform.localPosition = Vector3.zero;
+				FlightCamera.fetch.transform.localRotation = InternalCamera.Instance.transform.localRotation;
+			}
 		}
 
 

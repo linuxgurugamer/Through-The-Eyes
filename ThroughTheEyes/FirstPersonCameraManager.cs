@@ -40,7 +40,7 @@ namespace FirstPerson
 
 		public void CheckAndSetFirstPerson(Vessel pVessel)
 		{
-			FlightCamera flightCam = FlightCamera.fetch;
+			// FlightCamera flightCam = FlightCamera.fetch;
 
 			var kerbalEVA = ThroughTheEyes.GetKerbalEVAFromVessel(pVessel);
 
@@ -70,7 +70,7 @@ namespace FirstPerson
 				}
 				else
 				{
-					cameraState.saveState(flightCam);
+					// cameraState.saveState(flightCam);
 				}
 
 				KeyDisabler.instance.restoreKey (KeyDisabler.eKeyCommand.CAMERA_NEXT, KeyDisabler.eDisableLockSource.FirstPersonEVA);
@@ -79,25 +79,35 @@ namespace FirstPerson
 
 		public void SetFirstPersonCameraSettings(KerbalEVA eva)
 		{
+			var camera = InternalCamera.Instance;
+
 			FlightCamera flightCam = FlightCamera.fetch;
 
-			flightCam.transform.parent = eva.transform;
+			// flightCam.transform.parent = eva.transform;
 			//flightCam.transform.parent = FlightGlobals.ActiveVessel.transform;
 
 			//enableRenderers(pVessel.transform, false);
 			enableRenderers(eva.transform, false);
 
-			float clipScale = flightCam.mainCamera.farClipPlane / flightCam.mainCamera.nearClipPlane;
+			flightCam.EnableCamera();
+			flightCam.DeactivateUpdate();
+			flightCam.transform.parent = eva.transform;
 
-			flightCam.mainCamera.nearClipPlane = nearPlaneDistance;
-			flightCam.mainCamera.farClipPlane = flightCam.mainCamera.nearClipPlane * clipScale;
+			InternalCamera.Instance.SetTransform(eva.transform, true);
+			InternalCamera.Instance.EnableCamera();
+			// InternalCamera.Instance.enabled = false; // don't let the InternalCamera.Update logic run
+
+			// float clipScale = flightCam.mainCamera.farClipPlane / flightCam.mainCamera.nearClipPlane;
+
+			// flightCam.mainCamera.nearClipPlane = nearPlaneDistance;
+			// flightCam.mainCamera.farClipPlane = flightCam.mainCamera.nearClipPlane * clipScale;
 
 			isFirstPerson = true;
 			if (showSightAngle) {
-				fpgui = flightCam.gameObject.AddOrGetComponent<FPGUI>();
+				fpgui = camera.gameObject.AddOrGetComponent<FPGUI>();
 			}
-			flightCam.SetTargetNone();
-			flightCam.DeactivateUpdate();
+			// flightCam.SetTargetNone();
+			// flightCam.DeactivateUpdate();
 			viewToNeutral();
 			reorient();
 		}
@@ -124,6 +134,10 @@ namespace FirstPerson
 				   ) {
 					renderer.enabled = enable;
 				}
+				else
+				{
+					renderer.gameObject.layer = enable ? 17 : 20;
+				}
 			}
 		}
 
@@ -139,13 +153,16 @@ namespace FirstPerson
 			Vessel pVessel = FlightGlobals.ActiveVessel;
 			FlightCamera flightCam = FlightCamera.fetch;
 
-			cameraState.recallState(flightCam);
+			// cameraState.recallState(flightCam);
+
+			InternalCamera.Instance.DisableCamera();
 
 			if (FlightGlobals.ActiveVessel != null)
 			{
-				flightCam.SetTargetTransform(pVessel.transform);
+				// flightCam.SetTargetTransform(pVessel.transform);
 			}
 			flightCam.ActivateUpdate();
+			flightCam.transform.SetParent(flightCam.GetPivot());
 
 			isFirstPerson = false;
 			
@@ -178,7 +195,8 @@ namespace FirstPerson
 		
 		public bool isCameraProperlyPositioned(FlightCamera flightCam) {
 			//Not a particularly elegant way to determine if camera isn't crapped by some background stock logic or change view attempts:
-			return Vector3.Distance(flightCam.transform.localPosition, getFPCameraPosition(getFPCameraRotation(), currentfpeva)) < 0.001f;
+			// return Vector3.Distance(flightCam.transform.localPosition, getFPCameraPosition(getFPCameraRotation(), currentfpeva)) < 0.001f;
+			return true;
 		}
 		
 		public void updateGUI() {
@@ -194,14 +212,14 @@ namespace FirstPerson
 		}
 		
 		public void addYaw(float amount) {
-			yaw = Mathf.Clamp(yaw + amount, -MAX_AZIMUTH, MAX_AZIMUTH);
+			// yaw = Mathf.Clamp(yaw + amount, -MAX_AZIMUTH, MAX_AZIMUTH);
 			/*if (Mathf.Abs(yaw) > MAX_AZIMUTH) {
 				this.yaw = MAX_AZIMUTH * Mathf.Sign(this.yaw);
 			} */
 		}
 		
 		public void addPitch(float amount) {
-			pitch = Mathf.Clamp(pitch + amount, -MAX_LATITUDE, MAX_LATITUDE);
+			// pitch = Mathf.Clamp(pitch + amount, -MAX_LATITUDE, MAX_LATITUDE);
 			/*if (Mathf.Abs(pitch) > MAX_LATITUDE) {
 				this.pitch = MAX_LATITUDE * Mathf.Sign(this.pitch);
 			}*/
@@ -235,13 +253,16 @@ namespace FirstPerson
 			//KSPLog.print ("prereorient cam fwd: " + flightCam.transform.forward.ToString () + ", maincam fwd: " + flightCam.mainCamera.transform.forward.ToString ());
 
 
-			flightCam.transform.localRotation = Quaternion.LookRotation(cameraForward, cameraUp);
-			flightCam.transform.localPosition = cameraPosition;
+			//flightCam.transform.localRotation = Quaternion.LookRotation(cameraForward, cameraUp);
+			//flightCam.transform.localPosition = cameraPosition;
 			//flightCam.mainCamera.transform.localRotation = Quaternion.LookRotation(cameraForward, cameraUp);
 			//flightCam.mainCamera.transform.localPosition = cameraPosition;
 
-			flightCam.transform.parent = currentfpeva.transform;
+			// flightCam.transform.SetParent(currentfpeva.transform, false);
 			//flightCam.mainCamera.transform.parent = FlightGlobals.ActiveVessel.evaController.transform;
+			
+			// InternalCamera.Instance.transform.localRotation = flightCam.transform.localRotation;
+			// InternalCamera.Instance.transform.localPosition = cameraPosition;
 
 			//KSPLog.print (string.Format ("REORIENT Forward: {0}, Up: {1}, Position: {2}", cameraForward, cameraUp, cameraPosition));
 		}
