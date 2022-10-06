@@ -40,7 +40,6 @@
     <Compile Include="InstallChecker.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CameraState.cs" />
     <Compile Include="ConfigUtil.cs" />
     <Compile Include="DebugUtils.cs" />
     <Compile Include="FPGUI.cs" />
