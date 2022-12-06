@@ -10,21 +10,22 @@ namespace FirstPerson
     public static class ConfigUtil
     {
         static string configDir = "GameData/ThroughTheEyes/PluginData";
-        static string configPath = configDir + "/options.cfg";
+        static string _configPath = configDir + "/options.cfg";
+        static string ConfigPath { get { return KSPUtil.ApplicationRootPath + _configPath; } }
         static ConfigNode cfg;
 
         private static void SaveConfigFile()
         {
-            if (!Directory.Exists(configDir))
+            if (!Directory.Exists( configDir))
                 Directory.CreateDirectory(configDir);
-            cfg.Save(configPath);
+            cfg.Save(ConfigPath);
         }
 
         private static void checkConfig()
         {
             if (!Directory.Exists(configDir))
                 Directory.CreateDirectory(configDir);
-			cfg = ConfigNode.Load(configPath);
+			cfg = ConfigNode.Load(ConfigPath);
             if (cfg == null)
             {
                 cfg = new ConfigNode();

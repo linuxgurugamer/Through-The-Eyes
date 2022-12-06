@@ -161,7 +161,16 @@ namespace FirstPerson
 			keyDisabler.restoreAllKeys();
         }
 
-        internal static bool CheckControlLocks()
+		void OnDestroy()
+        {
+			GameEvents.onVesselChange.Remove(onVesselChange);
+			GameEvents.OnCameraChange.Remove(OnCameraChange);
+			GameEvents.OnIVACameraKerbalChange.Remove(OnIVACameraKerbalChange);
+			GameEvents.onGameSceneLoadRequested.Remove(onGameSceneLoadRequested);
+
+
+		}
+		internal static bool CheckControlLocks()
         {
             // Fix for a bug in Linux where typing would still control game elements even if
             // a textbox was focused.

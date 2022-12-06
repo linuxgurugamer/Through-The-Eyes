@@ -1,5 +1,14 @@
 ChangeLog
 
+2.0.4.2
+	Fixed path for loading configs (broken by new launcher)
+	Fixed memory leak caused by not removing callbacks
+
+2.0.4.1
+	Thanks to user @JonnyOThan for this:
+		Use InternalCam for first person
+			Certain graphics mods like EVE and Scatterer rely on the localspace camera for drawing effects like clouds and atmosphere when in low orbit. The existing implementation of pulling the camera's near and far planes closer was resulting in those effects getting clipped
+
 2.0.4
 	Thanks to user @JonnyOThan for this:
 		TTE now works in command chairs

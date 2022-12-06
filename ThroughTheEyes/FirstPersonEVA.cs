@@ -107,6 +107,19 @@ namespace FirstPerson
 			GameEvents.onGameSceneLoadRequested.Add(onSceneLoadRequested);
 		}
 
+		void OnDestroy()
+        {
+			GameEvents.onVesselDestroy.Remove(onVesselDestroy);
+			/*GameEvents.onCrewKilled.Add((v) => {
+           		fpCameraManager.resetCamera(null);
+			});*/
+
+			GameEvents.onVesselSwitching.Remove(onVesselSwitching);
+			GameEvents.OnMapExited.Remove(onMapExited);
+			GameEvents.onGameSceneLoadRequested.Remove(onSceneLoadRequested);
+
+		}
+
 		void Update()
 		{
 			Vessel pVessel = FlightGlobals.ActiveVessel;
