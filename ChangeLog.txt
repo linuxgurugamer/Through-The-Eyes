@@ -1,5 +1,8 @@
 ChangeLog
 
+2.0.4.3
+	Fixed small error in previous fix in path for loading files (broken by new launcher)
+
 2.0.4.2
 	Fixed path for loading configs (broken by new launcher)
 	Fixed memory leak caused by not removing callbacks
