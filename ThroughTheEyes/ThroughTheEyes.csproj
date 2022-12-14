@@ -37,6 +37,7 @@
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
     <Compile Include="FirstPersonCameraManager.cs" />
+    <Compile Include="InitialRegister.cs" />
     <Compile Include="InstallChecker.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

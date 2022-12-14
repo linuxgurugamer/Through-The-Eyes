@@ -9,7 +9,7 @@ namespace FirstPerson
 
     public static class ConfigUtil
     {
-        static string configDir { get { return KSPUtil.ApplicationRootPath + "GameData/ThroughTheEyes/PluginData"; } }
+        static string configDir { get { return InitialRegister.kspRootDir + "GameData/ThroughTheEyes/PluginData"; } }
 
         static string _configPath = configDir + "/options.cfg";
         static string ConfigPath { get { return  _configPath; } }
