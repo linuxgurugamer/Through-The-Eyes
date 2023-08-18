@@ -82,31 +82,31 @@ namespace FirstPerson
 				//************Rotation************
 				Quaternion manualRotation = Quaternion.identity;
 				Vector3 commandedManualRotation = Vector3.zero;
-				if (GameSettings.YAW_LEFT.GetKey (false)) {
+				if (GameSettings.YAW_LEFT.GetKey (false)) { // || GameSettings.EVA_yaw_left || GameSettings.axis_EVA_yaw
 					manualRotation = manualRotation * Quaternion.AngleAxis ((float)(-(double)eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.up);
 					commandedManualRotation -= eva.transform.up;
 					//KSPLog.print ("YAW LEFT");
-				} else if (GameSettings.YAW_RIGHT.GetKey (false)) {
+				} else if (GameSettings.YAW_RIGHT.GetKey (false)) { // || GameSettings.EVA_yaw_right || GameSettings.axis_EVA_yaw
 					manualRotation = manualRotation * Quaternion.AngleAxis ((float)((double)eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.up);
 					commandedManualRotation += eva.transform.up;
 					//KSPLog.print ("YAW RIGHT");
 				}
 
-				if (GameSettings.PITCH_UP.GetKey (false)) {
+				if (GameSettings.PITCH_UP.GetKey (false)) { // GameSettings.axis_EVA_pitch
 					manualRotation = manualRotation * Quaternion.AngleAxis ((float)(-(double)eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.right);
 					commandedManualRotation -= eva.transform.right;
 					//KSPLog.print ("PITCH UP");
-				} else if (GameSettings.PITCH_DOWN.GetKey (false)) {
+				} else if (GameSettings.PITCH_DOWN.GetKey (false)) { // GameSettings.axis_EVA_pitch
 					manualRotation = manualRotation * Quaternion.AngleAxis ((float)((double)eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.right);
 					commandedManualRotation += eva.transform.right;
 					//KSPLog.print ("PITCH DOWN");
 				}
 
-				if (GameSettings.ROLL_RIGHT.GetKey (false)) {
+				if (GameSettings.ROLL_RIGHT.GetKey (false)) { // GameSettings.axis_EVA_roll
 					manualRotation = manualRotation * Quaternion.AngleAxis ((float)(-(double)eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.forward);
 					commandedManualRotation -= eva.transform.forward;
 					//KSPLog.print ("ROLL RIGHT");
-				} else if (GameSettings.ROLL_LEFT.GetKey (false)) {
+				} else if (GameSettings.ROLL_LEFT.GetKey (false)) { // GameSettings.axis_EVA_roll
 					manualRotation = manualRotation * Quaternion.AngleAxis ((float)((double)eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.forward);
 					commandedManualRotation += eva.transform.forward;
 					//KSPLog.print ("ROLL LEFT");
@@ -173,31 +173,31 @@ namespace FirstPerson
 
 				//************Translation************
 				Vector3 manualTranslation = Vector3.zero;
-				if (GameSettings.TRANSLATE_LEFT.GetKey (false)) {
+				if (GameSettings.TRANSLATE_LEFT.GetKey (false)) { // GameSettings.EVA_Pack_left || GameSettings.axis_EVA_translate_x
 					manualTranslation += Vector3.left;
 					//manualRotation = manualRotation * Quaternion.AngleAxis((float) (-(double) eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.up);
 					//KSPLog.print ("TRANSLATE LEFT");
-				} else if (GameSettings.TRANSLATE_RIGHT.GetKey (false)) {
+				} else if (GameSettings.TRANSLATE_RIGHT.GetKey (false)) { // GameSettings.EVA_Pack_right || GameSettings.axis_EVA_translate_x
 					manualTranslation += Vector3.right;
 					//manualRotation = manualRotation * Quaternion.AngleAxis((float) ((double) eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.up);
 					//KSPLog.print ("TRANSLATE RIGHT");
 				}
 
-				if (GameSettings.TRANSLATE_UP.GetKey (false)) {
+				if (GameSettings.TRANSLATE_UP.GetKey (false)) { // GameSettings.EVA_Pack_up || GameSettings.axis_EVA_translate_y
 					manualTranslation += Vector3.up;
 					//manualRotation = manualRotation * Quaternion.AngleAxis((float) (-(double) eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.right);
 					//KSPLog.print ("TRANSLATE UP");
-				} else if (GameSettings.TRANSLATE_DOWN.GetKey (false)) {
+				} else if (GameSettings.TRANSLATE_DOWN.GetKey (false)) { // GameSettings.EVA_Pack_down || GameSettings.axis_EVA_translate_y
 					manualTranslation += Vector3.down;
 					//manualRotation = manualRotation * Quaternion.AngleAxis((float) ((double) eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.right);
 					//KSPLog.print ("TRANSLATE DOWN");
 				}
 
-				if (GameSettings.TRANSLATE_FWD.GetKey (false)) {
+				if (GameSettings.TRANSLATE_FWD.GetKey (false)) { // GameSettings.EVA_Pack_forward || GameSettings.axis_EVA_translate_z
 					manualTranslation += Vector3.forward;
 					//manualRotation = manualRotation * Quaternion.AngleAxis((float) (-(double) eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.forward);
 					//KSPLog.print ("TRANSLATE RIGHT");
-				} else if (GameSettings.TRANSLATE_BACK.GetKey (false)) {
+				} else if (GameSettings.TRANSLATE_BACK.GetKey (false)) { // GameSettings.EVA_Pack_back || GameSettings.axis_EVA_translate_z
 					manualTranslation += Vector3.back;
 					//manualRotation = manualRotation * Quaternion.AngleAxis((float) ((double) eva.turnRate * Mathf.Rad2Deg) * Time.deltaTime, eva.transform.forward);
 					//KSPLog.print ("TRANSLATE LEFT");
