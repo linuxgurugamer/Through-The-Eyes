@@ -126,6 +126,12 @@ namespace FirstPerson
 				   ) {
 					renderer.enabled = enable;
 				}
+				else if (renderer.sharedMaterial.name.StartsWith("Deferred/DummyForwardShader"))
+				{
+					// Deferred adds a dummy mesh here to force certain render passes to happen
+					// https://github.com/LGhassen/Deferred/blob/328104c6ef9f579594c7c9829a16cf91e65444d5/DeferredKSP/Utils/ForwardRenderingCompatibility.cs
+					// https://github.com/LGhassen/Scatterer/issues/238
+				}
 				else
 				{
 					const int LAYER_EVA = 17;
