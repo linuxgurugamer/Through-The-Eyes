@@ -1,5 +1,10 @@
 ChangeLog
 
+2.0.4.5 
+	Updated version file to use github for new version info
+	Thanks to github user JonnyOThan for this:
+		Fix rendering artifacts with newer versions of deferred + scatterer
+
 2.0.4.4
 	Fixed nullrefs due to ApplicationRootPath
 
