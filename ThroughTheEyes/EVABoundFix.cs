@@ -9,8 +9,49 @@ namespace FirstPerson
 	{
 		public static void Hook(KerbalEVA eva)
 		{
+			// Validate the KFSM state before constructing EVABoundFix. The
+			// constructor dereferences eva.On_bound_fall, eva.On_bound_land
+			// and eva.st_bound_fl directly; if any is still null (some custom
+			// EVA suits, partially-loaded vessels, or particular mod combos)
+			// the resulting NullReferenceException is logged at frame rate
+			// because FirstPersonEVA.Update() retries Hook every frame.
+			if (eva == null)
+			{
+				LogSkipOnce("eva is null");
+				return;
+			}
+			if (eva.vessel == null)
+			{
+				LogSkipOnce("eva.vessel is null");
+				return;
+			}
+			if (eva.On_bound_fall == null)
+			{
+				LogSkipOnce("eva.On_bound_fall is null");
+				return;
+			}
+			if (eva.On_bound_land == null)
+			{
+				LogSkipOnce("eva.On_bound_land is null");
+				return;
+			}
+			if (eva.st_bound_fl == null)
+			{
+				LogSkipOnce("eva.st_bound_fl is null");
+				return;
+			}
+
 			//The reference is held by the replacement delegate.
 			EVABoundFix temp = new EVABoundFix(eva);
+		}
+
+		// Dedup skip log messages so a persistently-broken EVA state does
+		// not spam Player.log at frame rate.
+		static readonly HashSet<string> _seenSkipReasons = new HashSet<string>();
+		static void LogSkipOnce(string reason)
+		{
+			if (_seenSkipReasons.Add(reason))
+				UnityEngine.Debug.Log("[ThroughTheEyes] EVABoundFix.Hook skipped: " + reason);
 		}
 
 		KerbalEVA myeva;
